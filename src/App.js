@@ -6,14 +6,31 @@ const mainUrl = `https://api.unsplash.com/photos/`;
 const searchUrl = `https://api.unsplash.com/search/photos/`;
 
 function App() {
+  const render = useRef(1);
+  const aa = useRef(false);
+  useEffect(() => {
+    if (aa.current) render.current += 1;
+    aa.current = true;
+  });
   const [loading, setLoading] = useState(true);
   const [photos, setPhotos] = useState([]);
   const [page, setPage] = useState(1);
   const [querry, setQuerry] = useState("");
   const mounted = useRef(false);
   const [newImages, setNewImages] = useState(false);
-
+  console.log(
+    "app render ",
+    render.current,
+    loading,
+    photos,
+    "page",
+    page,
+    "newItem",
+    newImages,
+    querry
+  );
   const fetchImages = async () => {
+    console.log("fetch start", render.current);
     setLoading(true);
     let url;
     if (!querry) url = `${mainUrl}?client_id=${clientID}&page=${page}`;
@@ -33,13 +50,18 @@ function App() {
       setNewImages(false);
       setLoading(false);
     }
+    console.log(`fetch end ${render.current} `);
   };
   useEffect(() => {
+    console.log("us1");
+
     fetchImages();
     // eslint-disable-next-line
   }, [page]);
 
   useEffect(() => {
+    console.log("us2");
+
     if (!mounted.current) {
       mounted.current = true;
       return;
@@ -56,13 +78,14 @@ function App() {
   };
 
   useEffect(() => {
+    console.log("us3");
     window.addEventListener("scroll", event);
     return () => window.removeEventListener("scroll", event);
   }, []);
   const handelSubmit = (e) => {
     e.preventDefault();
     if (!querry) return;
-    if (page === 1) fetchImages();
+    fetchImages();
     setPage(1);
   };
   return (
